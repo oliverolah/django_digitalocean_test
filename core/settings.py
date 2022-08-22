@@ -1,22 +1,14 @@
 from pathlib import Path
-import environ
+import os
 
-env = environ.Env(
-    DEBUG=(bool, False)
-)
-
-# Returns a boolean
-# Export via bash
-READ_DOT_ENV_FILE = env.bool('READ_DOT_ENV_FILE', default=False)
-if READ_DOT_ENV_FILE:
-    environ.Env.read_env()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-DEBUG = env('DEBUG')
-SECRET_KEY = env('SECRET_KEY')
-
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
+DEBUG = str(os.environ.get('DEBUG')) == '1' # True == 1
 ALLOWED_HOSTS = []
+if not DEBUG:
+    ALLOWED_HOSTS += [os.environ.get('ALLOWED_HOSTS')]
 
 
 # Application definition
@@ -29,6 +21,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     
+    # Created Django apps
     'home.apps.HomeConfig',
 ]
 
